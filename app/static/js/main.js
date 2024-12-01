@@ -95,6 +95,51 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    function showToast(message) {
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.remove();
+        }, 2300);
+    }
+
+    function formatTextForCopy(textData) {
+        return textData.map(item => `${item.text} (Confidence: ${(item.confidence * 100).toFixed(2)}%)`).join('\n');
+    }
+
+    function formatJSON(textData) {
+        return JSON.stringify(textData, null, 2);
+    }
+
+    function formatCSV(textData) {
+        const header = 'Text,Confidence\n';
+        const rows = textData.map(item => 
+            `"${item.text}",${(item.confidence * 100).toFixed(2)}`
+        ).join('\n');
+        return header + rows;
+    }
+
+    function formatDOCX(textData) {
+        return textData.map(item => 
+            `${item.text}\nConfidence: ${(item.confidence * 100).toFixed(2)}%\n`
+        ).join('\n');
+    }
+
+    function downloadFile(content, filename, type) {
+        const blob = new Blob([content], { type });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
     function displayResults(data) {
         const resultDiv = document.getElementById('text-results');
         resultDiv.innerHTML = '<h3>Detected Text:</h3>';
@@ -115,6 +160,58 @@ document.addEventListener('DOMContentLoaded', function() {
 
         document.getElementById('original-image').src = `data:image/jpeg;base64,${data.text_results.original_image}`;
         document.getElementById('result-image').src = `data:image/jpeg;base64,${data.text_results.annotated_image}`;
+
+        // Add copyable text
+        const copyableText = document.getElementById('copyable-text');
+        const plainText = formatTextForCopy(data.text_results.text_data);
+        copyableText.textContent = plainText;
+
+        // Add copy button functionality
+        const copyBtn = document.querySelector('.copy-btn');
+        copyBtn.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(plainText);
+                copyBtn.classList.add('copied');
+                showToast('Text copied to clipboard!');
+                setTimeout(() => copyBtn.classList.remove('copied'), 2000);
+            } catch (err) {
+                showToast('Failed to copy text');
+            }
+        });
+
+        // Add export button functionality
+        document.querySelectorAll('.export-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const type = btn.dataset.type;
+                let content, filename, mimeType;
+
+                switch(type) {
+                    case 'txt':
+                        content = plainText;
+                        filename = 'extracted_text.txt';
+                        mimeType = 'text/plain';
+                        break;
+                    case 'json':
+                        content = formatJSON(data.text_results.text_data);
+                        filename = 'extracted_text.json';
+                        mimeType = 'application/json';
+                        break;
+                    case 'csv':
+                        content = formatCSV(data.text_results.text_data);
+                        filename = 'extracted_text.csv';
+                        mimeType = 'text/csv';
+                        break;
+                    case 'docx':
+                        content = formatDOCX(data.text_results.text_data);
+                        filename = 'extracted_text.docx';
+                        mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+                        break;
+                }
+
+                downloadFile(content, filename, mimeType);
+                showToast(`Downloaded as ${type.toUpperCase()}`);
+            });
+        });
     }
 
     newScanBtn.addEventListener('click', () => {

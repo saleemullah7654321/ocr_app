@@ -49,6 +49,32 @@
 
             <div id="text-results" class="text-results"></div>
 
+            <div class="extracted-text-section">
+                <div class="section-header">
+                    <h3><i class="fas fa-file-alt"></i> Extracted Text</h3>
+                    <div class="export-buttons">
+                        <button class="export-btn" data-type="txt">
+                            <i class="fas fa-file-text"></i> TXT
+                        </button>
+                        <button class="export-btn" data-type="json">
+                            <i class="fas fa-file-code"></i> JSON
+                        </button>
+                        <button class="export-btn" data-type="csv">
+                            <i class="fas fa-file-csv"></i> CSV
+                        </button>
+                        <button class="export-btn" data-type="docx">
+                            <i class="fas fa-file-word"></i> DOCX
+                        </button>
+                    </div>
+                </div>
+                <div class="copyable-text-container">
+                    <pre id="copyable-text"></pre>
+                    <button class="copy-btn" title="Copy to clipboard">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+
             <div class="image-container">
                 <div class="image-box">
                     <h3><i class="fas fa-image"></i> Original Image</h3>
