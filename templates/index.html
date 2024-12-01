@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ID Card Scanner</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>ID Card Scanner</h1>
+        <div class="upload-container">
+            <form id="upload-form">
+                <input type="file" id="image-input" accept="image/*" required>
+                <button type="submit">Process Image</button>
+            </form>
+        </div>
+        <div id="result-container">
+            <img id="result-image" style="display: none;">
+            <div id="text-results"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('upload-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            const fileInput = document.getElementById('image-input');
+            formData.append('file', fileInput.files[0]);
+
+            try {
+                const response = await fetch('/process', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    const resultDiv = document.getElementById('text-results');
+                    resultDiv.innerHTML = '<h2>Detected Text:</h2>';
+                    data.text_results.text_data.forEach(item => {
+                        resultDiv.innerHTML += `<p>${item.text} (Confidence: ${(item.confidence * 100).toFixed(2)}%)</p>`;
+                    });
+
+                    // Display the annotated image
+                    const resultImage = document.getElementById('result-image');
+                    resultImage.src = `data:image/jpeg;base64,${data.text_results.image_data}`;
+                    resultImage.style.display = 'block';
+                } else {
+                    alert(data.error || 'Processing failed');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while processing the image');
+            }
+        });
+    </script>
+</body>
+</html> 
