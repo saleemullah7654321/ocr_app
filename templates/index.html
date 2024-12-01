@@ -1,91 +1,75 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>ID Card Scanner</title>
+    <title>Smart ID Scanner</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/style.css">
-    <style>
-        .image-container {
-            margin: 20px 0;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        .image-box {
-            border: 1px solid #ccc;
-            padding: 10px;
-            border-radius: 4px;
-        }
-        .image-box h3 {
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
-        img {
-            max-width: 100%;
-            height: auto;
-        }
-    </style>
 </head>
 <body>
+    <div class="navbar">
+        <div class="logo">
+            <i class="fas fa-id-card"></i>
+            <span>Smart ID Scanner</span>
+        </div>
+    </div>
+
     <div class="container">
-        <h1>ID Card Scanner</h1>
-        <div class="upload-container">
-            <form id="upload-form">
-                <input type="file" id="image-input" accept="image/*" required>
-                <button type="submit">Process Image</button>
+        <div class="upload-section">
+            <h1>ID Card Text Detection</h1>
+            <p class="subtitle">Upload your ID card image for instant text detection</p>
+            
+            <form id="upload-form" class="drop-zone">
+                <div class="drop-zone-content">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Drag and drop your image here or</p>
+                    <input type="file" id="image-input" accept="image/*" required hidden>
+                    <button type="button" class="browse-btn">Browse Files</button>
+                </div>
+                <div class="selected-file"></div>
+                <button type="submit" class="process-btn" disabled>
+                    <i class="fas fa-magic"></i> Process Image
+                </button>
             </form>
         </div>
-        <div id="text-results"></div>
-        <div class="image-container">
-            <div class="image-box">
-                <h3>Original Image</h3>
-                <img id="original-image" style="display: none;">
+
+        <div id="loading" class="loading-overlay hidden">
+            <div class="spinner"></div>
+            <p>Processing your image...</p>
+        </div>
+
+        <div id="results-section" class="results-section hidden">
+            <div class="results-header">
+                <h2>Detection Results</h2>
+                <button class="new-scan-btn">
+                    <i class="fas fa-redo"></i> New Scan
+                </button>
             </div>
-            <div class="image-box">
-                <h3>Processed Image with OCR Results</h3>
-                <img id="result-image" style="display: none;">
+
+            <div id="text-results" class="text-results"></div>
+
+            <div class="image-container">
+                <div class="image-box">
+                    <h3><i class="fas fa-image"></i> Original Image</h3>
+                    <div class="image-wrapper">
+                        <img id="original-image" alt="Original ID Card">
+                    </div>
+                </div>
+                <div class="image-box">
+                    <h3><i class="fas fa-magic"></i> Processed Image</h3>
+                    <div class="image-wrapper">
+                        <img id="result-image" alt="Processed ID Card">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <script>
-        document.getElementById('upload-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const formData = new FormData();
-            const fileInput = document.getElementById('image-input');
-            formData.append('file', fileInput.files[0]);
+    <footer>
+        <p>© 2024 Smart ID Scanner. All rights reserved.</p>
+    </footer>
 
-            try {
-                const response = await fetch('/process', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const data = await response.json();
-                if (data.success) {
-                    const resultDiv = document.getElementById('text-results');
-                    resultDiv.innerHTML = '<h2>Detected Text:</h2>';
-                    data.text_results.text_data.forEach(item => {
-                        resultDiv.innerHTML += `<p>${item.text} (Confidence: ${(item.confidence * 100).toFixed(2)}%)</p>`;
-                    });
-
-                    // Display both original and processed images
-                    const originalImage = document.getElementById('original-image');
-                    const resultImage = document.getElementById('result-image');
-                    
-                    originalImage.src = `data:image/jpeg;base64,${data.text_results.original_image}`;
-                    resultImage.src = `data:image/jpeg;base64,${data.text_results.annotated_image}`;
-                    
-                    originalImage.style.display = 'block';
-                    resultImage.style.display = 'block';
-                } else {
-                    alert(data.error || 'Processing failed');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('An error occurred while processing the image');
-            }
-        });
-    </script>
+    <script src="/static/js/main.js"></script>
 </body>
 </html> 

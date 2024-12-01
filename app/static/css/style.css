@@ -1,36 +1,225 @@
+:root {
+    --primary-color: #4a90e2;
+    --secondary-color: #2c3e50;
+    --success-color: #27ae60;
+    --background-color: #f5f6fa;
+    --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--background-color);
+    color: var(--secondary-color);
+    line-height: 1.6;
+}
+
+.navbar {
+    background: white;
+    padding: 1rem 2rem;
+    box-shadow: var(--box-shadow);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
 .container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
 }
 
-.upload-container {
-    margin: 20px 0;
-    padding: 20px;
-    border: 2px dashed #ccc;
-    border-radius: 4px;
+.upload-section {
     text-align: center;
+    margin-bottom: 2rem;
 }
 
-#result-container {
-    margin-top: 20px;
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--secondary-color);
 }
 
-#result-image {
-    max-width: 100%;
-    margin-top: 20px;
+.subtitle {
+    color: #666;
+    margin-bottom: 2rem;
 }
 
-button {
-    padding: 10px 20px;
-    background-color: #007bff;
+.drop-zone {
+    background: white;
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.drop-zone.dragover {
+    border-color: var(--primary-color);
+    background: #f0f7ff;
+}
+
+.drop-zone-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.drop-zone-content i {
+    font-size: 3rem;
+    color: var(--primary-color);
+}
+
+.browse-btn, .process-btn, .new-scan-btn {
+    background: var(--primary-color);
     color: white;
     border: none;
-    border-radius: 4px;
+    padding: 0.8rem 1.5rem;
+    border-radius: 5px;
     cursor: pointer;
-    margin-top: 10px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
 }
 
-button:hover {
-    background-color: #0056b3;
+.browse-btn:hover, .process-btn:hover, .new-scan-btn:hover {
+    background: #357abd;
+}
+
+.process-btn {
+    width: 100%;
+    margin-top: 1rem;
+    background: var(--success-color);
+}
+
+.process-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.selected-file {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.results-section {
+    background: white;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: var(--box-shadow);
+}
+
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.text-results {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 5px;
+    margin-bottom: 2rem;
+}
+
+.text-results p {
+    padding: 0.5rem;
+    border-bottom: 1px solid #eee;
+}
+
+.image-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.image-box {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+}
+
+.image-box h3 {
+    padding: 1rem;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.image-wrapper {
+    padding: 1rem;
+}
+
+.image-wrapper img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+footer {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+    margin-top: 3rem;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 0 1rem;
+    }
+    
+    h1 {
+        font-size: 2rem;
+    }
+    
+    .image-container {
+        grid-template-columns: 1fr;
+    }
 } 
