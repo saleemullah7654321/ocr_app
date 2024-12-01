@@ -3,6 +3,27 @@
 <head>
     <title>ID Card Scanner</title>
     <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .image-container {
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .image-box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .image-box h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -13,9 +34,16 @@
                 <button type="submit">Process Image</button>
             </form>
         </div>
-        <div id="result-container">
-            <img id="result-image" style="display: none;">
-            <div id="text-results"></div>
+        <div id="text-results"></div>
+        <div class="image-container">
+            <div class="image-box">
+                <h3>Original Image</h3>
+                <img id="original-image" style="display: none;">
+            </div>
+            <div class="image-box">
+                <h3>Processed Image with OCR Results</h3>
+                <img id="result-image" style="display: none;">
+            </div>
         </div>
     </div>
 
@@ -41,9 +69,14 @@
                         resultDiv.innerHTML += `<p>${item.text} (Confidence: ${(item.confidence * 100).toFixed(2)}%)</p>`;
                     });
 
-                    // Display the annotated image
+                    // Display both original and processed images
+                    const originalImage = document.getElementById('original-image');
                     const resultImage = document.getElementById('result-image');
-                    resultImage.src = `data:image/jpeg;base64,${data.text_results.image_data}`;
+                    
+                    originalImage.src = `data:image/jpeg;base64,${data.text_results.original_image}`;
+                    resultImage.src = `data:image/jpeg;base64,${data.text_results.annotated_image}`;
+                    
+                    originalImage.style.display = 'block';
                     resultImage.style.display = 'block';
                 } else {
                     alert(data.error || 'Processing failed');
